@@ -36,7 +36,11 @@ const IS_TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches
 if (IS_TOUCH) document.body.classList.add('touch');
 // opt-in on touch devices for the heavy realistic characters; remembered on the device, takes effect after a reload
 function wantRealistic() { try { return localStorage.getItem('frightAisle.realistic') === '1'; } catch (e) { return false; } }
-{ const rb = document.querySelector('#btns button[data-k="Real"]'); if (rb) rb.textContent = wantRealistic() ? '🧟 Realistic: on' : '🧟 Realistic: off'; }
+{ const rb = document.querySelector('#btns button[data-k="Real"]');
+  if (rb) { rb.textContent = wantRealistic() ? '🧟 Realistic: on' : '🧟 Realistic: off';
+    // copies of the game that ship without replacement models (the public one) have nothing to turn on, so hide the button there
+    const hide = () => { rb.style.display = 'none'; };
+    if (/^http/.test(location.protocol)) fetch('models/custom/manifest.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : {}).then(m => { if (!Object.keys(m).some(k => k[0] !== '_')) hide(); }).catch(hide); else hide(); } }
 { const stick = document.getElementById('stick'), knob = document.getElementById('knob'), lookHint = document.getElementById('lookHint'); let stickId = null, sx0 = 0, sy0 = 0;
   canvas.addEventListener('touchstart', e => { for (const t of e.changedTouches) {
     if (t.clientX >= innerWidth / 2) { lookHint.classList.add('used'); continue; }
@@ -84,7 +88,15 @@ function pushCart(dt) {
   cart.position.x = clamp(cart.position.x + cart.vx * dt, -6, 6); cart.position.z = clamp(cart.position.z + cart.vz * dt, -46, 45.6);
   const k = Math.exp(-3 * dt); cart.vx *= k; cart.vz *= k;
 }
-function showCart() { $('cartList').textContent = cartItems.length ? '🛒 ' + cartItems.map(d => d.name).join(', ') + (mode === 'yard' ? '  —  press Y to go back to the store' : '  —  press Y to set up your yard') : ''; }
+function showCart() { $('cartList').textContent = cartItems.length ? fixKeys('🛒 ' + cartItems.map(d => d.name).join(', ') + (mode === 'yard' ? '  —  press Y to go back to the store' : '  —  press Y to set up your yard')) : ''; }
+// on touch devices, messages name the on-screen buttons instead of keyboard keys
+function fixKeys(s) {
+  if (!IS_TOUCH) return s;
+  const tap = (word) => m => (m[0] === 'P' ? 'Tap ' : 'tap ') + word;
+  return String(s).replace(/\b[Pp]ress E\b/g, tap('Add')).replace(/\b[Pp]ress Y\b/g, tap('Yard')).replace(/\b[Pp]ress G\b/g, tap('Quality'))
+    .replace('P takes a photo', 'Photo takes a picture').replace('L switches', 'Lights switches').replace('G changes', 'Quality changes')
+    .replace('(H to show)', '(tap Info to show)').replace('(E to remove)', '(tap Add to remove)');
+}
 function addToCart() {
   if (mode !== 'store' || !nearSt) return;
   if (!nearSt.found) { toast('Try it first!<br>Step on the pad, then add it', 2.5); return; }
@@ -235,7 +247,7 @@ function loadSave() {
 }
 function resetSave() { if (!confirm('Erase your progress, secrets and cart?')) return; try { localStorage.removeItem(SAVE_KEY); } catch (e) { } location.reload(); }
 // one-time hints that appear when they become relevant, instead of a wall of keys up front
-function tip(id, text) { if (tipsSeen[id] || !started) return; tipsSeen[id] = 1; const el = $('tip'); el.textContent = text; el.style.opacity = 1; clearTimeout(tip.t); tip.t = setTimeout(() => el.style.opacity = 0, 7000); save(); }
+function tip(id, text) { if (tipsSeen[id] || !started) return; tipsSeen[id] = 1; const el = $('tip'); el.textContent = fixKeys(text); el.style.opacity = 1; clearTimeout(tip.t); tip.t = setTimeout(() => el.style.opacity = 0, 7000); save(); }
 let fpsT0 = 0, fpsN = 0, fpsDone = false, cardOff = false;
 
 const clock = new THREE.Clock();
@@ -248,7 +260,7 @@ function step(dt, time) {
     let f = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) + touch.mz, s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + touch.mx;
     const len = Math.hypot(f, s); if (len > 1) { f /= len; s /= len; }
     const run = keys.ShiftLeft || keys.ShiftRight || touch.run, sp = (run ? 8.5 : 4.6) * dt, sy = Math.sin(player.yaw), cy = Math.cos(player.yaw);
-    const bx = yardM ? [YX - 8, YX + 8, 2.4, 43] : [-6.4, 6.4, -47, 46];
+    const bx = yardM ? [YX - 8, YX + 8, 2.4, 43] : [-6.4, 6.4, -49.4, 46];   // far limit sits past the last pair of pads (z = -48)
     player.x = clamp(player.x + (-sy * f + cy * s) * sp, bx[0], bx[1]);
     player.z = clamp(player.z + (-cy * f - sy * s) * sp, bx[2], bx[3]);
     if (len > .05) { player.bob += dt * (run ? 13 : 9); const k = Math.floor(player.bob / PI);
@@ -259,7 +271,7 @@ function step(dt, time) {
   if (ctx && ctx.listener.setPosition) { ctx.listener.setPosition(player.x, 1.65, player.z); ctx.listener.setOrientation(-Math.sin(player.yaw), 0, -Math.cos(player.yaw), 0, 1, 0); }
   if (!yardM && started) pushCart(dt);
   if (started) {
-    tip('walk', 'Walk with W A S D and look with the mouse. Step on a glowing pad to set one off.');
+    tip('walk', IS_TOUCH ? 'Left thumb walks, right thumb looks. Step on a glowing pad to set one off.' : 'Walk with W A S D and look with the mouse. Step on a glowing pad to set one off.');
     if (!yardM && Math.hypot(cart.position.x - player.x, cart.position.z - player.z) < 1.3) tip('push', 'You are pushing the cart. It carries whatever you pick with E.');
     // if the first few seconds run slowly, step the graphics down once
     if (!fpsDone && !document.hidden) { const now = performance.now(); if (!fpsT0) fpsT0 = now; fpsN++;
@@ -313,7 +325,7 @@ function step(dt, time) {
     cardState = state; $('card').className = !target || cardOff ? '' : target.def && target.t >= 0 ? 'show mini' : 'show';   // shrinks out of the way while the show plays
     if (target && target.def) {
       const d = target.def; $('cName').textContent = d.name; $('cDoes').textContent = d.does; $('cReal').textContent = 'Scare rating ' + '💀'.repeat(SCARE[d.name] || 3) + '   ·   ' + d.real;
-      $('cGo').textContent = (target.t >= 0 ? '● ACTIVATED — watch!' : '▶ Step on the glowing pad to activate') + (yardM ? '' : cartItems.includes(d) ? '   ·   🛒 in your cart (E to remove)' : target.found ? '   ·   press E to add to cart' : '');
+      $('cGo').textContent = fixKeys((target.t >= 0 ? '● ACTIVATED — watch!' : '▶ Step on the glowing pad to activate') + (yardM ? '' : cartItems.includes(d) ? '   ·   🛒 in your cart (E to remove)' : target.found ? '   ·   press E to add to cart' : ''));
     } else if (target) { $('cName').textContent = 'Grand Finale'; $('cDoes').textContent = 'Sets off every animatronic in the aisle at once while the store lights flicker.'; $('cReal').textContent = '';
       $('cGo').textContent = finale.unlocked ? '▶ Step on the pad!' : '🔒 Locked — activate all ' + stations.length + ' animatronics first'; }
   }
@@ -324,6 +336,6 @@ updateCount(); frame();
 // hold the start button until the models are in, so the game never looks frozen mid-play
 const startEl = document.querySelector('#overlay .start'); startEl.textContent = 'LOADING MODELS…';
 Promise.race([Promise.all([new Promise(r => (window.MODELS && THREE.GLTFLoader) ? whenModels(r) : r()), loadCustom()]), new Promise(r => setTimeout(r, 40000))])
-  .then(() => { window.gameReady = true; startEl.textContent = 'CLICK TO ENTER'; });
+  .then(() => { window.gameReady = true; startEl.textContent = IS_TOUCH ? 'TAP TO ENTER' : 'CLICK TO ENTER'; });
 // debug / test hook
 window.sim = { player, stations, trigger, finale, step, render: draw, composer, setStore, cart, cartItems, addToCart, enterYard, leaveYard, get yardStations() { return yardStations; }, get mode() { return mode; }, get nearSt() { return nearSt; }, set nearSt(v) { nearSt = v; } };

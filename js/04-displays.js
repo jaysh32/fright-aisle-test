@@ -124,7 +124,7 @@ const finPad = add(new THREE.Mesh(new THREE.CircleGeometry(1.5, 32), finMat), sc
 const $ = id => document.getElementById(id);
 const dots = DEFS.map(() => $('dots').appendChild(document.createElement('i')));
 let toastTimer = 0;
-function toast(msg, secs = 3.5) { $('toast').innerHTML = msg; $('toast').style.opacity = 1; clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').style.opacity = 0, secs * 1000); }
+function toast(msg, secs = 3.5) { $('toast').innerHTML = fixKeys(msg); $('toast').style.opacity = 1; clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').style.opacity = 0, secs * 1000); }
 // how scary each one is (1-5 skulls) and when its show light strobes
 const SCARE = { 'Gourd Ghoul': 3, 'Cranky the Clown': 4, 'Leaping Widow': 5, 'Grave Grabber': 3, 'Hagatha & Her Cauldron': 2, 'Lullaby Lily': 4, 'Moon Howler': 4, 'The Soul Collector': 5, 'Big Bones': 3, 'Old Stitchface': 3,
   'Pharaoh Phil': 3, 'Snapdragon': 4, 'Captain Squawk': 1, 'The Crawler': 5, 'Stiltz': 4, 'The Last Ride': 3, 'The Graveyard Gang': 1 };
