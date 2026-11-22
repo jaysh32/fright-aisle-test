@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Fright Aisle — Animatronic Simulator</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="hud"><h1>FRIGHT AISLE</h1><div id="count"></div><div id="dots"></div>
+  <div id="scare"><span>SCARE METER</span><div><i id="scareFill"></i></div></div><div id="cartList"></div></div>
+<div id="flash"></div>
+<div id="btns"><button data-k="KeyE">🛒 Add</button><button data-k="KeyY">🏠 Yard</button><button data-k="KeyP">📷 Photo</button><button data-k="KeyL">💡 Lights</button><button data-k="KeyG">⚙ Quality</button><button data-k="KeyH">ℹ Info</button><button data-k="Full">⛶ Full</button><button data-k="Real" class="tOnly">🧟 Realistic: off</button><button data-k="Reset">↺ Reset</button></div>
+<div id="stick"><i id="knob"></i></div>
+<div id="lookHint">drag here to look</div>
+<div id="tip"></div>
+<div id="hint"></div>
+<div id="card"><h2 id="cName"></h2><p id="cDoes"></p><p class="real" id="cReal"></p><p class="go" id="cGo"></p></div>
+<div id="toast"></div>
+<div id="overlay">
+  <h1>FRIGHT AISLE</h1>
+  <h3>HALLOWEEN ANIMATRONIC SHOWROOM</h3>
+  <div class="keys kb">
+    <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk &nbsp;·&nbsp; <kbd>Mouse</kbd> look &nbsp;·&nbsp; <kbd>Shift</kbd> run<br>
+    Walk onto a glowing <b style="color:#ff8a1f">STEP HERE</b> pad to set off the animatronic.<br>
+    Find all 17 to unlock the <b style="color:#7dff5a">Grand Finale</b> pad at the end of the aisle.<br>
+    Tips for everything else appear as you go. Your progress is saved.<br>
+    <span style="color:#9a8cb4;font-size:13px">Sound on!</span>
+  </div>
+  <div class="keys tch">
+    <b>Left thumb</b>: drag anywhere on the left to walk. Push far to run.<br>
+    <b>Right thumb</b>: drag on the right to look around.<br>
+    Walk onto a glowing <b style="color:#ff8a1f">STEP HERE</b> pad to set off the animatronic.<br>
+    Find all 17 to unlock the <b style="color:#7dff5a">Grand Finale</b> pad at the end of the aisle.<br>
+    <span style="color:#9a8cb4;font-size:13px">Turn the tablet sideways and turn the sound on. Tap Full for full screen.</span>
+  </div>
+  <div id="fileTip" style="display:none;margin-top:14px;font-size:13px;color:#ffcf8a;max-width:560px">You opened the game file directly, so four displays use their simpler built-in figures.<br>For the realistic characters, close this and start with <b>Play Fright Aisle.bat</b> instead.</div>
+  <div class="start">LOADING…</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<script src="models.js"></script>
+<script src="js/01-core.js"></script>
+<script src="js/02-store.js"></script>
+<script src="js/03-figures.js"></script>
+<script src="js/04-displays.js"></script>
+<script src="js/05-game.js"></script>
+</body>
+</html>

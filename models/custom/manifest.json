@@ -1,0 +1,35 @@
+{
+  "_note": "One entry per display to replace. See README.txt. Entries starting with _ are ignored. Models and animations: Mixamo (Adobe).",
+  "Gourd Ghoul": {
+    "file": "pumpkinhulk.fbx", "clip": "scream", "height": 2.3,
+    "animations": { "attack": "whiteclown.fbx", "roar": "roar.fbx", "idle": "idle.fbx" },
+    "rest": "idle",
+    "show": [[0.4, "roar"], [3.3, "attack"], [6.2, "scream"]],
+    "does": "A hulking pumpkin-skinned brute roars, swings both fists at you, then screams.",
+    "credit": "Inspired by: pumpkin-headed lunging stalkers. Realistic character model from Mixamo (Adobe)."
+  },
+  "Grave Grabber": {
+    "file": "survivor.fbx", "clip": "laugh", "height": 1.95, "offset": [0, 0.12, 0.3],
+    "animations": { "standup": "skeletonzombie.fbx", "scream": "pumpkinhulk.fbx", "bite": "bite.fbx" },
+    "rest": "standup", "once": ["standup"],
+    "show": [[0.4, "standup"], [5.2, "scream"], [8, "bite"]],
+    "does": "Lies flat on his grave, drags himself to his feet, screams, then lunges in to bite.",
+    "credit": "Inspired by: zombie \"groundbreaker\" props. Realistic character model from Mixamo (Adobe)."
+  },
+  "Stiltz": {
+    "file": "whiteclown.fbx", "clip": "attack", "height": 3.0, "dur": 13,
+    "animations": { "laugh": "survivor.fbx", "scream": "pumpkinhulk.fbx", "dance": "dance.fbx", "idle": "idle.fbx" },
+    "rest": "idle",
+    "show": [[0.5, "laugh"], [4.5, "attack"], [7.5, "scream"], [9, "dance"]],
+    "does": "A 10-foot clown in a black suit laughs at you, lunges with both arms, shrieks, then breaks into a dance.",
+    "credit": "Inspired by: towering clowns. Realistic character model from Mixamo (Adobe)."
+  },
+  "Moon Howler": {
+    "file": "skeletonzombie.fbx", "clip": "standup", "height": 2.3,
+    "animations": { "scream": "pumpkinhulk.fbx", "attack": "whiteclown.fbx", "roar": "roar.fbx", "idle": "idle.fbx" },
+    "rest": "idle",
+    "show": [[0.5, "roar"], [2.7, "scream"], [5.2, "attack"]],
+    "does": "A clawed, skinless ghoul roars, screeches at the ceiling, then slashes at you with both claws.",
+    "credit": "Inspired by: towering werewolves and ghouls. Realistic character model from Mixamo (Adobe)."
+  }
+}
